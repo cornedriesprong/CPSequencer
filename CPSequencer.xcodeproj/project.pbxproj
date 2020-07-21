@@ -12,28 +12,6 @@
 		97B6C04624C0D13C00E88F57 /* CPSequencerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C04524C0D13C00E88F57 /* CPSequencerTests.m */; };
 		97B6C04824C0D13C00E88F57 /* CPSequencer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C03A24C0D13C00E88F57 /* CPSequencer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		97B6C05224C0D16500E88F57 /* CPSequencer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C05124C0D16500E88F57 /* CPSequencer.mm */; };
-		97B6C06524C0D1F000E88F57 /* AETime.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C05324C0D1EF00E88F57 /* AETime.m */; };
-		97B6C06624C0D1F000E88F57 /* AEArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C05424C0D1EF00E88F57 /* AEArray.m */; };
-		97B6C06724C0D1F000E88F57 /* AEUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C05524C0D1EF00E88F57 /* AEUtilities.m */; };
-		97B6C06824C0D1F000E88F57 /* AEAudioThreadEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C05624C0D1EF00E88F57 /* AEAudioThreadEndpoint.m */; };
-		97B6C06924C0D1F000E88F57 /* AEAudioThreadEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C05724C0D1EF00E88F57 /* AEAudioThreadEndpoint.h */; };
-		97B6C06A24C0D1F000E88F57 /* AEArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C05824C0D1EF00E88F57 /* AEArray.h */; };
-		97B6C06B24C0D1F000E88F57 /* AEWeakRetainingProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C05924C0D1EF00E88F57 /* AEWeakRetainingProxy.h */; };
-		97B6C06C24C0D1F000E88F57 /* AEManagedValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C05A24C0D1EF00E88F57 /* AEManagedValue.m */; };
-		97B6C06D24C0D1F000E88F57 /* AETime.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C05B24C0D1F000E88F57 /* AETime.h */; };
-		97B6C06E24C0D1F000E88F57 /* AEMessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C05C24C0D1F000E88F57 /* AEMessageQueue.h */; };
-		97B6C06F24C0D1F000E88F57 /* AEUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C05D24C0D1F000E88F57 /* AEUtilities.h */; };
-		97B6C07024C0D1F000E88F57 /* AEWeakRetainingProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C05E24C0D1F000E88F57 /* AEWeakRetainingProxy.m */; };
-		97B6C07124C0D1F000E88F57 /* AETypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C05F24C0D1F000E88F57 /* AETypes.h */; };
-		97B6C07224C0D1F000E88F57 /* AEMessageQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C06024C0D1F000E88F57 /* AEMessageQueue.m */; };
-		97B6C07324C0D1F000E88F57 /* AEMainThreadEndpoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C06124C0D1F000E88F57 /* AEMainThreadEndpoint.m */; };
-		97B6C07424C0D1F000E88F57 /* AEMainThreadEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C06224C0D1F000E88F57 /* AEMainThreadEndpoint.h */; };
-		97B6C07524C0D1F000E88F57 /* AETypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C06324C0D1F000E88F57 /* AETypes.m */; };
-		97B6C07624C0D1F000E88F57 /* AEManagedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C06424C0D1F000E88F57 /* AEManagedValue.h */; };
-		97B6C07C24C0D20D00E88F57 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C07824C0D20D00E88F57 /* TPCircularBuffer.h */; };
-		97B6C07D24C0D20D00E88F57 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C07924C0D20D00E88F57 /* TPCircularBuffer.c */; };
-		97B6C07E24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C07A24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.h */; };
-		97B6C07F24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.c in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C07B24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,28 +42,6 @@
 		97B6C04524C0D13C00E88F57 /* CPSequencerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPSequencerTests.m; sourceTree = "<group>"; };
 		97B6C04724C0D13C00E88F57 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		97B6C05124C0D16500E88F57 /* CPSequencer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CPSequencer.mm; sourceTree = "<group>"; };
-		97B6C05324C0D1EF00E88F57 /* AETime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AETime.m; sourceTree = "<group>"; };
-		97B6C05424C0D1EF00E88F57 /* AEArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AEArray.m; sourceTree = "<group>"; };
-		97B6C05524C0D1EF00E88F57 /* AEUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AEUtilities.m; sourceTree = "<group>"; };
-		97B6C05624C0D1EF00E88F57 /* AEAudioThreadEndpoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AEAudioThreadEndpoint.m; sourceTree = "<group>"; };
-		97B6C05724C0D1EF00E88F57 /* AEAudioThreadEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEAudioThreadEndpoint.h; sourceTree = "<group>"; };
-		97B6C05824C0D1EF00E88F57 /* AEArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEArray.h; sourceTree = "<group>"; };
-		97B6C05924C0D1EF00E88F57 /* AEWeakRetainingProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEWeakRetainingProxy.h; sourceTree = "<group>"; };
-		97B6C05A24C0D1EF00E88F57 /* AEManagedValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AEManagedValue.m; sourceTree = "<group>"; };
-		97B6C05B24C0D1F000E88F57 /* AETime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AETime.h; sourceTree = "<group>"; };
-		97B6C05C24C0D1F000E88F57 /* AEMessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEMessageQueue.h; sourceTree = "<group>"; };
-		97B6C05D24C0D1F000E88F57 /* AEUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEUtilities.h; sourceTree = "<group>"; };
-		97B6C05E24C0D1F000E88F57 /* AEWeakRetainingProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AEWeakRetainingProxy.m; sourceTree = "<group>"; };
-		97B6C05F24C0D1F000E88F57 /* AETypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AETypes.h; sourceTree = "<group>"; };
-		97B6C06024C0D1F000E88F57 /* AEMessageQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AEMessageQueue.m; sourceTree = "<group>"; };
-		97B6C06124C0D1F000E88F57 /* AEMainThreadEndpoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AEMainThreadEndpoint.m; sourceTree = "<group>"; };
-		97B6C06224C0D1F000E88F57 /* AEMainThreadEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEMainThreadEndpoint.h; sourceTree = "<group>"; };
-		97B6C06324C0D1F000E88F57 /* AETypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AETypes.m; sourceTree = "<group>"; };
-		97B6C06424C0D1F000E88F57 /* AEManagedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEManagedValue.h; sourceTree = "<group>"; };
-		97B6C07824C0D20D00E88F57 /* TPCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPCircularBuffer.h; sourceTree = "<group>"; };
-		97B6C07924C0D20D00E88F57 /* TPCircularBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TPCircularBuffer.c; sourceTree = "<group>"; };
-		97B6C07A24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TPCircularBuffer+AudioBufferList.h"; sourceTree = "<group>"; };
-		97B6C07B24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "TPCircularBuffer+AudioBufferList.c"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,8 +106,6 @@
 			children = (
 				97B6C03A24C0D13C00E88F57 /* CPSequencer.h */,
 				97B6C05124C0D16500E88F57 /* CPSequencer.mm */,
-				97B6C07724C0D1F500E88F57 /* TAAE */,
-				97B6C08024C0D21300E88F57 /* TPCircularBuffer */,
 				97B6C03B24C0D13C00E88F57 /* Info.plist */,
 			);
 			path = CPSequencer;
@@ -166,42 +120,6 @@
 			path = CPSequencerTests;
 			sourceTree = "<group>";
 		};
-		97B6C07724C0D1F500E88F57 /* TAAE */ = {
-			isa = PBXGroup;
-			children = (
-				97B6C05824C0D1EF00E88F57 /* AEArray.h */,
-				97B6C05424C0D1EF00E88F57 /* AEArray.m */,
-				97B6C05724C0D1EF00E88F57 /* AEAudioThreadEndpoint.h */,
-				97B6C05624C0D1EF00E88F57 /* AEAudioThreadEndpoint.m */,
-				97B6C06224C0D1F000E88F57 /* AEMainThreadEndpoint.h */,
-				97B6C06124C0D1F000E88F57 /* AEMainThreadEndpoint.m */,
-				97B6C06424C0D1F000E88F57 /* AEManagedValue.h */,
-				97B6C05A24C0D1EF00E88F57 /* AEManagedValue.m */,
-				97B6C05C24C0D1F000E88F57 /* AEMessageQueue.h */,
-				97B6C06024C0D1F000E88F57 /* AEMessageQueue.m */,
-				97B6C05B24C0D1F000E88F57 /* AETime.h */,
-				97B6C05324C0D1EF00E88F57 /* AETime.m */,
-				97B6C05F24C0D1F000E88F57 /* AETypes.h */,
-				97B6C06324C0D1F000E88F57 /* AETypes.m */,
-				97B6C05D24C0D1F000E88F57 /* AEUtilities.h */,
-				97B6C05524C0D1EF00E88F57 /* AEUtilities.m */,
-				97B6C05924C0D1EF00E88F57 /* AEWeakRetainingProxy.h */,
-				97B6C05E24C0D1F000E88F57 /* AEWeakRetainingProxy.m */,
-			);
-			path = TAAE;
-			sourceTree = "<group>";
-		};
-		97B6C08024C0D21300E88F57 /* TPCircularBuffer */ = {
-			isa = PBXGroup;
-			children = (
-				97B6C07924C0D20D00E88F57 /* TPCircularBuffer.c */,
-				97B6C07824C0D20D00E88F57 /* TPCircularBuffer.h */,
-				97B6C07B24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.c */,
-				97B6C07A24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.h */,
-			);
-			path = TPCircularBuffer;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -209,18 +127,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97B6C06924C0D1F000E88F57 /* AEAudioThreadEndpoint.h in Headers */,
-				97B6C06B24C0D1F000E88F57 /* AEWeakRetainingProxy.h in Headers */,
-				97B6C07124C0D1F000E88F57 /* AETypes.h in Headers */,
-				97B6C06A24C0D1F000E88F57 /* AEArray.h in Headers */,
-				97B6C06F24C0D1F000E88F57 /* AEUtilities.h in Headers */,
-				97B6C06D24C0D1F000E88F57 /* AETime.h in Headers */,
-				97B6C07E24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.h in Headers */,
-				97B6C07624C0D1F000E88F57 /* AEManagedValue.h in Headers */,
-				97B6C06E24C0D1F000E88F57 /* AEMessageQueue.h in Headers */,
 				97B6C04824C0D13C00E88F57 /* CPSequencer.h in Headers */,
-				97B6C07C24C0D20D00E88F57 /* TPCircularBuffer.h in Headers */,
-				97B6C07424C0D1F000E88F57 /* AEMainThreadEndpoint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,17 +244,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97B6C07D24C0D20D00E88F57 /* TPCircularBuffer.c in Sources */,
-				97B6C06524C0D1F000E88F57 /* AETime.m in Sources */,
-				97B6C07524C0D1F000E88F57 /* AETypes.m in Sources */,
-				97B6C06C24C0D1F000E88F57 /* AEManagedValue.m in Sources */,
-				97B6C07024C0D1F000E88F57 /* AEWeakRetainingProxy.m in Sources */,
-				97B6C07F24C0D20D00E88F57 /* TPCircularBuffer+AudioBufferList.c in Sources */,
-				97B6C07324C0D1F000E88F57 /* AEMainThreadEndpoint.m in Sources */,
-				97B6C07224C0D1F000E88F57 /* AEMessageQueue.m in Sources */,
-				97B6C06824C0D1F000E88F57 /* AEAudioThreadEndpoint.m in Sources */,
-				97B6C06624C0D1F000E88F57 /* AEArray.m in Sources */,
-				97B6C06724C0D1F000E88F57 /* AEUtilities.m in Sources */,
 				97B6C05224C0D16500E88F57 /* CPSequencer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -490,6 +386,7 @@
 		97B6C04C24C0D13C00E88F57 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 5GWBH83EBX;
@@ -513,6 +410,7 @@
 		97B6C04D24C0D13C00E88F57 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 5GWBH83EBX;
