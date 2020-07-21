@@ -8,6 +8,7 @@
 
 #include "CPSequencer.h"
 #include "vector"
+#include <TPCircularBuffer/TPCircularBuffer.h>
 
 typedef struct PlayingNote {
     int pitch;
