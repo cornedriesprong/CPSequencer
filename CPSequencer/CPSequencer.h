@@ -6,9 +6,7 @@
 //  Copyright © 2020 cp3.io. All rights reserved.
 //
 
-#include <Foundation/Foundation.h>
 #include <AudioToolbox/AudioToolbox.h>
-#include <AVFoundation/AVFoundation.h>
 
 #define NOTE_ON             0x90
 #define NOTE_OFF            0x80

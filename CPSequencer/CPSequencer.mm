@@ -8,7 +8,7 @@
 
 #include "CPSequencer.h"
 #include "vector"
-#include <TPCircularBuffer/TPCircularBuffer.h>
+#include "TPCircularBuffer.h"
 
 typedef struct PlayingNote {
     int pitch;
@@ -19,7 +19,7 @@ typedef struct PlayingNote {
     bool hasStopped;
 } PlayingNote;
 
-TPCircularBuffer fifoBuffer;
+//TPCircularBuffer fifoBuffer;
 
 // nb: these are owned by the audio thread
 int previousSubtick = 0;
@@ -51,26 +51,26 @@ void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon) {
     callbackRefCon = refCon;
     scheduledEvents.reserve(NOTE_CAPACITY);
     playingNotes.reserve(NOTE_CAPACITY);
-    TPCircularBufferInit(&fifoBuffer, BUFFER_LENGTH);
+//    TPCircularBufferInit(&fifoBuffer, BUFFER_LENGTH);
 }
 
 void addMidiEvent(MIDIEvent event) {
     
     uint32_t availableBytes = 0;
-    MIDIEvent *head = (MIDIEvent *)TPCircularBufferHead(&fifoBuffer, &availableBytes);
-    head = &event;
-    TPCircularBufferProduceBytes(&fifoBuffer, head, sizeof(MIDIEvent));
+//    MIDIEvent *head = (MIDIEvent *)TPCircularBufferHead(&fifoBuffer, &availableBytes);
+//    head = &event;
+//    TPCircularBufferProduceBytes(&fifoBuffer, head, sizeof(MIDIEvent));
 }
 
 void getMidiEventsFromFIFOBuffer() {
     
     uint32_t bytes = -1;
     while (bytes != 0) {
-        MIDIEvent *event = (MIDIEvent *)TPCircularBufferTail(&fifoBuffer, &bytes);
-        if (event) {
-            scheduledEvents.push_back(event);
-            TPCircularBufferConsume(&fifoBuffer, sizeof(MIDIEvent));
-        }
+//        MIDIEvent *event = (MIDIEvent *)TPCircularBufferTail(&fifoBuffer, &bytes);
+//        if (event) {
+//            scheduledEvents.push_back(event);
+//            TPCircularBufferConsume(&fifoBuffer, sizeof(MIDIEvent));
+//        }
     }
 }
 

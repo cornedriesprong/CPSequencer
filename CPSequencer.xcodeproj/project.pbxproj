@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9764263824C1BFFD0046D943 /* libRealtimeWatchdog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9764263724C1BFF40046D943 /* libRealtimeWatchdog.a */; };
 		97B6C04124C0D13C00E88F57 /* CPSequencer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97B6C03724C0D13C00E88F57 /* CPSequencer.framework */; };
 		97B6C04624C0D13C00E88F57 /* CPSequencerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C04524C0D13C00E88F57 /* CPSequencerTests.m */; };
 		97B6C04824C0D13C00E88F57 /* CPSequencer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C03A24C0D13C00E88F57 /* CPSequencer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -32,7 +31,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		9764262224C1B1500046D943 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9764262424C1B18C0046D943 /* libRealtimeWatchdog.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRealtimeWatchdog.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9764263224C1BFF40046D943 /* RealtimeWatchdog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RealtimeWatchdog.xcodeproj; path = ../../_downloads/RealtimeWatchdog/RealtimeWatchdog.xcodeproj; sourceTree = "<group>"; };
 		97B6C03724C0D13C00E88F57 /* CPSequencer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CPSequencer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -49,7 +47,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9764263824C1BFFD0046D943 /* libRealtimeWatchdog.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,7 +65,6 @@
 			isa = PBXGroup;
 			children = (
 				9764262424C1B18C0046D943 /* libRealtimeWatchdog.a */,
-				9764262224C1B1500046D943 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -393,6 +389,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../_downloads/TPCircularBuffer\"";
 				INFOPLIST_FILE = CPSequencer/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -418,6 +415,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../_downloads/TPCircularBuffer\"";
 				INFOPLIST_FILE = CPSequencer/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
