@@ -23,7 +23,7 @@ TPCircularBuffer fifoBuffer;
 
 // nb: these are owned by the audio thread
 int previousSubtick = 0;
-int previousBeat = 0;
+int previousQuarter = 0;
 callback_t callback;
 void *callbackRefCon;
 std::vector<MIDIEvent*> scheduledEvents;
@@ -124,6 +124,9 @@ void fireEvents(MIDIPacket *midiData,
     if (scheduledEvents.size() == 0)
         return;
     
+    printf("firing      %d:%d\n", beat, subtick);
+    printf("---------------------\n");
+    
     for (int i = 0; i < scheduledEvents.size(); i++) {
         
         if (subtick == scheduledEvents[i]->subtick &&
@@ -220,12 +223,14 @@ int64_t sampleTimeForNextSubtick(const double sampleRate,
 
 void scheduleEventsForNextBeat(const double beatPosition) {
     
-    double integral;
-    modf(beatPosition, &integral);
-    int beat = (int)integral;
-    if (beat != previousBeat) {
-        callback(beat + 1, callbackRefCon);
-        previousBeat = beat;
+    double beat;
+    modf(beatPosition, &beat);
+    double quarter = int(floor(beatPosition * 4.0)) % 4;
+    if (quarter != previousQuarter) {
+        callback((int)beat + 1,
+                 (int)quarter,
+                 callbackRefCon);
+        previousQuarter = quarter;
     }
 }
 
@@ -233,22 +238,22 @@ void renderTimeline(const AUEventSampleTime now,
                     const double sampleRate,
                     const UInt32 frameCount,
                     const double tempo,
-                    const double currentBeatPosition,
+                    const double beatPosition,
                     MIDIPacket *midiData) {
     
     // get MIDI events from FIFO buffer and put in scheduledEvents
     getMidiEventsFromFIFOBuffer();
     
-    uint8_t subtickAtBufferBegin = subtickPosition(currentBeatPosition);
+    uint8_t subtickAtBufferBegin = subtickPosition(beatPosition);
     uint8_t subtickOffset = 0;
     // nb: it seems we need to increase the buffer's window size a little
     // bit to account for timing jitter. 128 seems to be a good value.
-    for (int64_t outputTimestamp = sampleTimeForNextSubtick(sampleRate, tempo, now, currentBeatPosition);
+    for (int64_t outputTimestamp = sampleTimeForNextSubtick(sampleRate, tempo, now, beatPosition);
          outputTimestamp <= (now + frameCount + 128);
          outputTimestamp += samplesPerSubtick(sampleRate, tempo)) {
         
         // wrap beat around if subtick count in current render cycle overflows beat boundaries
-        uint8_t beat = floor(currentBeatPosition) + 1;
+        uint8_t beat = floor(beatPosition) + 1;
         if ((subtickAtBufferBegin + subtickOffset) >= PPQ)
             beat += 1;
         
@@ -260,17 +265,17 @@ void renderTimeline(const AUEventSampleTime now,
             continue;
         }
         
-        if ((subtick - previousSubtick) != 1 && (previousSubtick - subtick) != PPQ - 1) {
-            if (subtick - previousSubtick == 0) {
-                printf("double subtick at   %d:%d\n", beat, subtick);
-            } else {
-                int missedSubtickCount = (subtick - previousSubtick) - 1;
-                printf("missed %d subticks at %d:%d\n", missedSubtickCount, beat, previousSubtick);
-            }
-            printf("output timestamp    %lld\n", outputTimestamp);
-            printf("buffer end          %lld\n", now + frameCount);
-            printf("-------------------------\n");
-        }
+//        if ((subtick - previousSubtick) != 1 && (previousSubtick - subtick) != PPQ - 1) {
+//            if (subtick - previousSubtick == 0) {
+//                printf("double subtick at   %d:%d\n", beat, subtick);
+//            } else {
+//                int missedSubtickCount = (subtick - previousSubtick) - 1;
+//                printf("missed %d subticks at %d:%d\n", missedSubtickCount, beat, previousSubtick);
+//            }
+//            printf("output timestamp    %lld\n", outputTimestamp);
+//            printf("buffer end          %lld\n", now + frameCount);
+//            printf("-------------------------\n");
+//        }
         
         previousSubtick = subtick;
         
@@ -286,5 +291,5 @@ void renderTimeline(const AUEventSampleTime now,
         subtickOffset++;
     }
     
-    scheduleEventsForNextBeat(currentBeatPosition);
+    scheduleEventsForNextBeat(beatPosition);
 }

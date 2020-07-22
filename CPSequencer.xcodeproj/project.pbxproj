@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9742EF7E24C8713E00456B18 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9742EF7724C8713E00456B18 /* TPCircularBuffer.h */; };
+		9742EF7F24C8713E00456B18 /* TPCircularBuffer+AudioBufferList.c in Sources */ = {isa = PBXBuildFile; fileRef = 9742EF7824C8713E00456B18 /* TPCircularBuffer+AudioBufferList.c */; };
+		9742EF8024C8713E00456B18 /* TPCircularBuffer.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 9742EF7924C8713E00456B18 /* TPCircularBuffer.podspec */; };
+		9742EF8124C8713E00456B18 /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 9742EF7A24C8713E00456B18 /* README.markdown */; };
+		9742EF8224C8713E00456B18 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 9742EF7B24C8713E00456B18 /* TPCircularBuffer.c */; };
+		9742EF8324C8713E00456B18 /* TPCircularBuffer+AudioBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9742EF7C24C8713E00456B18 /* TPCircularBuffer+AudioBufferList.h */; };
 		97B6C04124C0D13C00E88F57 /* CPSequencer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97B6C03724C0D13C00E88F57 /* CPSequencer.framework */; };
 		97B6C04624C0D13C00E88F57 /* CPSequencerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 97B6C04524C0D13C00E88F57 /* CPSequencerTests.m */; };
 		97B6C04824C0D13C00E88F57 /* CPSequencer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B6C03A24C0D13C00E88F57 /* CPSequencer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -31,6 +37,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9742EF7724C8713E00456B18 /* TPCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPCircularBuffer.h; sourceTree = "<group>"; };
+		9742EF7824C8713E00456B18 /* TPCircularBuffer+AudioBufferList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "TPCircularBuffer+AudioBufferList.c"; sourceTree = "<group>"; };
+		9742EF7924C8713E00456B18 /* TPCircularBuffer.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TPCircularBuffer.podspec; sourceTree = "<group>"; };
+		9742EF7A24C8713E00456B18 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.markdown; sourceTree = "<group>"; };
+		9742EF7B24C8713E00456B18 /* TPCircularBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TPCircularBuffer.c; sourceTree = "<group>"; };
+		9742EF7C24C8713E00456B18 /* TPCircularBuffer+AudioBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TPCircularBuffer+AudioBufferList.h"; sourceTree = "<group>"; };
 		9764262424C1B18C0046D943 /* libRealtimeWatchdog.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRealtimeWatchdog.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9764263224C1BFF40046D943 /* RealtimeWatchdog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RealtimeWatchdog.xcodeproj; path = ../../_downloads/RealtimeWatchdog/RealtimeWatchdog.xcodeproj; sourceTree = "<group>"; };
 		97B6C03724C0D13C00E88F57 /* CPSequencer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CPSequencer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,6 +73,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9742EF7624C8713E00456B18 /* TPCircularBuffer */ = {
+			isa = PBXGroup;
+			children = (
+				9742EF7724C8713E00456B18 /* TPCircularBuffer.h */,
+				9742EF7824C8713E00456B18 /* TPCircularBuffer+AudioBufferList.c */,
+				9742EF7924C8713E00456B18 /* TPCircularBuffer.podspec */,
+				9742EF7A24C8713E00456B18 /* README.markdown */,
+				9742EF7B24C8713E00456B18 /* TPCircularBuffer.c */,
+				9742EF7C24C8713E00456B18 /* TPCircularBuffer+AudioBufferList.h */,
+			);
+			path = TPCircularBuffer;
+			sourceTree = "<group>";
+		};
 		9764262124C1B1500046D943 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -102,6 +127,7 @@
 			children = (
 				97B6C03A24C0D13C00E88F57 /* CPSequencer.h */,
 				97B6C05124C0D16500E88F57 /* CPSequencer.mm */,
+				9742EF7624C8713E00456B18 /* TPCircularBuffer */,
 				97B6C03B24C0D13C00E88F57 /* Info.plist */,
 			);
 			path = CPSequencer;
@@ -123,7 +149,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9742EF8324C8713E00456B18 /* TPCircularBuffer+AudioBufferList.h in Headers */,
 				97B6C04824C0D13C00E88F57 /* CPSequencer.h in Headers */,
+				9742EF7E24C8713E00456B18 /* TPCircularBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,6 +251,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9742EF8124C8713E00456B18 /* README.markdown in Resources */,
+				9742EF8024C8713E00456B18 /* TPCircularBuffer.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,7 +270,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9742EF8224C8713E00456B18 /* TPCircularBuffer.c in Sources */,
 				97B6C05224C0D16500E88F57 /* CPSequencer.mm in Sources */,
+				9742EF7F24C8713E00456B18 /* TPCircularBuffer+AudioBufferList.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

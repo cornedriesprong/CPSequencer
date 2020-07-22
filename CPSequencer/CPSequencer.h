@@ -33,7 +33,9 @@ typedef struct MIDIEvent {
     bool isQueued;
 } MIDIEvent;
 
-typedef void (*callback_t)(int beat, void * __nullable refCon);
+typedef void (*callback_t)(const int beat,
+                           const int quarter,
+                           void * __nullable refCon);
 
 void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon);
 void addMidiEvent(MIDIEvent event);
@@ -43,4 +45,4 @@ void renderTimeline(const AUEventSampleTime now,
                     const UInt32 frameCount,
                     const double tempo,
                     const double currentBeatPosition,
-                    MIDIPacket *midiData);
+                    MIDIPacket * _Nonnull midiData);
