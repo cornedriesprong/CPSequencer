@@ -9,6 +9,7 @@
 #include "CPSequencer.h"
 #include "vector"
 #include "TPCircularBuffer.h"
+#include <os/lock.h>
 
 typedef struct PlayingNote {
     int pitch;
@@ -20,14 +21,19 @@ typedef struct PlayingNote {
 } PlayingNote;
 
 TPCircularBuffer fifoBuffer;
+static struct os_unfair_lock_s lock;
 
 // nb: these are owned by the audio thread
-int previousSubtick = -1;
-int prevQuarter = -1;
-callback_t callback;
-void *callbackRefCon;
-std::vector<MIDIEvent*> scheduledEvents;
-std::vector<PlayingNote> playingNotes;
+static int previousSubtick = -1;
+static int prevQuarter = -1;
+static callback_t callback;
+static void *callbackRefCon;
+static std::vector<MIDIEvent*> scheduledEvents;
+static std::vector<PlayingNote> playingNotes;
+static bool sendMIDIClockStart = true;
+
+// shared variable, only access via trylock
+static bool MIDIClockOn = true;
 
 MIDIEvent event(int beat, int subtick) {
     
@@ -52,6 +58,10 @@ void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon) {
     scheduledEvents.reserve(NOTE_CAPACITY);
     playingNotes.reserve(NOTE_CAPACITY);
     TPCircularBufferInit(&fifoBuffer, BUFFER_LENGTH);
+}
+
+void setMIDIClockOn(bool isOn) {
+    MIDIClockOn = isOn;
 }
 
 void addMidiEvent(MIDIEvent event) {
@@ -131,6 +141,25 @@ void addEventToMidiData(char status, MIDIEvent *ev, MIDIPacket *midiData) {
     midiData[ev->dest].length = size + 3;
 }
 
+void scheduleMIDIClock(uint8_t subtick,
+                       MIDIPacket *midi) {
+    
+    if (subtick % (PPQ / 24) == 0) {
+        if (sendMIDIClockStart) {
+            for (int i = 0; i < 8; i++) {
+                midi[i].data[0] = MIDI_CLOCK_START;
+                midi[i].length++;
+            }
+            sendMIDIClockStart = false;
+        } else {
+            for (int i = 0; i < 8; i++) {
+                midi[i].data[0] = MIDI_CLOCK;
+                midi[i].length++;
+            }
+        }
+    }
+}
+
 void fireEvents(MIDIPacket *midiData,
                 const int beat,
                 const uint8_t subtick) {
@@ -165,8 +194,6 @@ void fireEvents(MIDIPacket *midiData,
 
             // schedule note on
             addEventToMidiData(NOTE_ON, event, midiData);
-            
-            printf("playing     %d:%d\n", event->beat, event->subtick);
             
             // schedule note off
             PlayingNote noteOff;
@@ -265,14 +292,23 @@ void clearBuffers(MIDIPacket *midi) {
         }
         playingNotes.clear();
     }
+    
+    // stop MIDI clock
+    if (os_unfair_lock_trylock(&lock)) {
+        if (MIDIClockOn)
+            for (int i = 0; i < 8; i++) {
+                midi[i].data[0] = MIDI_CLOCK_STOP;
+                midi[i].length++;
+            }
+        os_unfair_lock_unlock(&lock);
+    }
 }
 
-void resetSequencer(const double beatPosition) {
+void stopSequencer(const double beatPosition) {
     
     prevQuarter = -1;
     previousSubtick = -1;
     scheduleEventsForNextBeat(0);
-//        // stop MIDI clock
 }
 
 void renderTimeline(const AUEventSampleTime now,
@@ -321,6 +357,12 @@ void renderTimeline(const AUEventSampleTime now,
 //        }
         
         previousSubtick = subtick;
+        
+        if (os_unfair_lock_trylock(&lock)) {
+            if (MIDIClockOn)
+                scheduleMIDIClock(subtick, midi);
+            os_unfair_lock_unlock(&lock);
+        }
         
         fireEvents(midi,
                    beat,

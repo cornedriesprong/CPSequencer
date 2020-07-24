@@ -40,7 +40,8 @@ typedef void (*callback_t)(const int beat,
 void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon);
 void addMidiEvent(MIDIEvent event);
 void clearBuffers(MIDIPacket * _Nonnull midiData);
-void resetSequencer(const double beatPosition);
+void stopSequencer(const double beatPosition);
+void setMIDIClockOn(bool isOn);
 
 void renderTimeline(const AUEventSampleTime now,
                     const double sampleRate,
