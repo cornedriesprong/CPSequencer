@@ -177,12 +177,11 @@ void fireEvents(MIDIPacket *midiData,
             beat == scheduledEvents[i]->beat &&
             scheduledEvents[i]->queued == true) {
             
-            MIDIEvent *event = scheduledEvents[i];
+            MIDIEvent *ev = scheduledEvents[i];
             
             // if there's a playing note with same pitch, stop it first
             for (int j = 0; j < playingNotes.size(); j++) {
-
-                if (playingNotes[j].pitch == event->data1 &&
+                if (playingNotes[j].pitch == ev->data1 &&
                     !playingNotes[j].stopped) {
 
                     // if so, send note off
@@ -192,25 +191,36 @@ void fireEvents(MIDIPacket *midiData,
                 }
             }
 
-            // schedule note on
-            addEventToMidiData(NOTE_ON, event, midiData);
-            
-            // schedule note off
-            PlayingNote noteOff;
-            noteOff.pitch = event->data1;
-            
-            int currentBeat;
-            if (subtick + event->duration >= PPQ) {
-                currentBeat = beat + (int)floor((event->duration + subtick) / (double)PPQ);
-            } else {
-                currentBeat = beat;
+            switch (ev->status) {
+                case NOTE_ON: {
+                    addEventToMidiData(NOTE_ON, ev, midiData);
+                    
+                    // schedule note off
+                    PlayingNote noteOff;
+                    noteOff.pitch = ev->data1;
+                    
+                    int currentBeat;
+                    if (subtick + ev->duration >= PPQ) {
+                        currentBeat = beat + (int)floor((ev->duration + subtick) / (double)PPQ);
+                    } else {
+                        currentBeat = beat;
+                    }
+                    noteOff.beat    = currentBeat;
+                    noteOff.subtick = (subtick + ev->duration) % PPQ;
+                    noteOff.channel = ev->channel;
+                    noteOff.dest    = ev->dest;
+                    noteOff.stopped = false;
+                    playingNotes.push_back(noteOff);
+                }
+                case CC: {
+                    addEventToMidiData(CC, ev, midiData);
+                    break;
+                }
+                case PITCH_BEND: {
+                    addEventToMidiData(PITCH_BEND, ev, midiData);
+                    break;
+                }
             }
-            noteOff.beat = currentBeat;
-            noteOff.subtick = (subtick + event->duration) % PPQ;
-            noteOff.channel = event->channel;
-            noteOff.dest = event->dest;
-            noteOff.stopped = false;
-            playingNotes.push_back(noteOff);
             
             scheduledEvents[i]->queued = false;
         }
