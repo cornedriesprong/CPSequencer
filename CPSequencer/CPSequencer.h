@@ -28,9 +28,9 @@ typedef struct MIDIEvent {
     uint8_t data1;
     uint8_t data2;
     int duration;   // only relevant for note events
-    int destination;
+    int dest;
     int channel;
-    bool isQueued;
+    bool queued;
 } MIDIEvent;
 
 typedef void (*callback_t)(const int beat,
@@ -39,6 +39,8 @@ typedef void (*callback_t)(const int beat,
 
 void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon);
 void addMidiEvent(MIDIEvent event);
+void clearBuffers(MIDIPacket * _Nonnull midiData);
+void resetSequencer(const double beatPosition);
 
 void renderTimeline(const AUEventSampleTime now,
                     const double sampleRate,

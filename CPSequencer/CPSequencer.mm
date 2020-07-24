@@ -15,15 +15,15 @@ typedef struct PlayingNote {
     int beat;
     int subtick;
     int channel;
-    int destination;
-    bool hasStopped;
+    int dest;
+    bool stopped;
 } PlayingNote;
 
 TPCircularBuffer fifoBuffer;
 
 // nb: these are owned by the audio thread
-int previousSubtick = 0;
-int previousQuarter = 0;
+int previousSubtick = -1;
+int prevQuarter = -1;
 callback_t callback;
 void *callbackRefCon;
 std::vector<MIDIEvent*> scheduledEvents;
@@ -39,8 +39,8 @@ MIDIEvent event(int beat, int subtick) {
     event.data2 = 100;
     event.duration = 24;
     event.channel = 0;
-    event.destination = 0;
-    event.isQueued = true;
+    event.dest = 0;
+    event.queued = true;
     
     return event;
 }
@@ -74,8 +74,8 @@ void getMidiEventsFromFIFOBuffer() {
     }
 }
 
-void stopPlayingNotes(MIDIPacket *midiData,
-                      const uint8_t beat,
+void stopPlayingNotes(MIDIPacket *midi,
+                      const int beat,
                       const uint8_t subtick) {
     
     if (playingNotes.size() == 0)
@@ -86,35 +86,53 @@ void stopPlayingNotes(MIDIPacket *midiData,
         // check if playing note is due to be stopped
         if (subtick == playingNotes[i].subtick &&
             beat == playingNotes[i].beat &&
-            !playingNotes[i].hasStopped) {
+            !playingNotes[i].stopped) {
             
             // if so, send note off
             PlayingNote note = playingNotes[i];
             
             // check if destination doesn't have weird value
-            if (note.destination < 0 || note.destination > 7)
-                note.destination = 0;
+            if (note.dest < 0 || note.dest > 7)
+                note.dest = 0;
             
-            int size = midiData[note.destination].length;
-            midiData[note.destination].data[size] = NOTE_OFF + note.channel;
-            midiData[note.destination].data[size + 1] = note.pitch;
-            midiData[note.destination].data[size + 2] = 0;
-            midiData[note.destination].length = size + 3;
+            int size = midi[note.dest].length;
+            midi[note.dest].data[size] = NOTE_OFF + note.channel;
+            midi[note.dest].data[size + 1] = note.pitch;
+            midi[note.dest].data[size + 2] = 0;
+            midi[note.dest].length = size + 3;
             
-            playingNotes[i].hasStopped = true;
+            playingNotes[i].stopped = true;
         }
     }
     
     // remove playing notes that have stopped
     for (int i = 0; i < playingNotes.size(); i++) {
-        if (playingNotes[i].hasStopped) {
+        if (playingNotes[i].stopped) {
             playingNotes.erase(playingNotes.begin() + i);
         }
     }
 }
 
+void addPlayingNoteToMidiData(char status, PlayingNote *note, MIDIPacket *midi) {
+    
+    int size = midi[note->dest].length;
+    midi[note->dest].data[size] = status + note->channel;
+    midi[note->dest].data[size + 1] = note->pitch;
+    midi[note->dest].data[size + 2] = 0;
+    midi[note->dest].length = size + 3;
+}
+
+void addEventToMidiData(char status, MIDIEvent *ev, MIDIPacket *midiData) {
+    
+    int size = midiData[ev->dest].length;
+    midiData[ev->dest].data[size] = status + ev->channel;
+    midiData[ev->dest].data[size + 1] = ev->data1;
+    midiData[ev->dest].data[size + 2] = ev->data2;
+    midiData[ev->dest].length = size + 3;
+}
+
 void fireEvents(MIDIPacket *midiData,
-                const uint8_t beat,
+                const int beat,
                 const uint8_t subtick) {
     
     stopPlayingNotes(midiData,
@@ -124,14 +142,11 @@ void fireEvents(MIDIPacket *midiData,
     if (scheduledEvents.size() == 0)
         return;
     
-    printf("firing      %d:%d\n", beat, subtick);
-    printf("---------------------\n");
-    
     for (int i = 0; i < scheduledEvents.size(); i++) {
         
         if (subtick == scheduledEvents[i]->subtick &&
             beat == scheduledEvents[i]->beat &&
-            scheduledEvents[i]->isQueued == true) {
+            scheduledEvents[i]->queued == true) {
             
             MIDIEvent *event = scheduledEvents[i];
             
@@ -139,26 +154,19 @@ void fireEvents(MIDIPacket *midiData,
             for (int j = 0; j < playingNotes.size(); j++) {
 
                 if (playingNotes[j].pitch == event->data1 &&
-                    !playingNotes[j].hasStopped) {
+                    !playingNotes[j].stopped) {
 
                     // if so, send note off
                     PlayingNote note = playingNotes[j];
-                    playingNotes[j].hasStopped = true;
-
-                    int size = midiData[note.destination].length;
-                    midiData[note.destination].data[size] = NOTE_OFF + note.channel;
-                    midiData[note.destination].data[size + 1] = note.pitch;
-                    midiData[note.destination].data[size + 2] = 0;
-                    midiData[note.destination].length = size + 3;
+                    note.stopped = true;
+                    addPlayingNoteToMidiData(NOTE_OFF, &note, midiData);
                 }
             }
 
             // schedule note on
-            int size = midiData[event->destination].length;
-            midiData[event->destination].data[size] = NOTE_ON + event->channel;
-            midiData[event->destination].data[size + 1] = event->data1;
-            midiData[event->destination].data[size + 2] = event->data2;
-            midiData[event->destination].length = size + 3;
+            addEventToMidiData(NOTE_ON, event, midiData);
+            
+            printf("playing     %d:%d\n", event->beat, event->subtick);
             
             // schedule note off
             PlayingNote noteOff;
@@ -173,17 +181,17 @@ void fireEvents(MIDIPacket *midiData,
             noteOff.beat = currentBeat;
             noteOff.subtick = (subtick + event->duration) % PPQ;
             noteOff.channel = event->channel;
-            noteOff.destination = event->destination;
-            noteOff.hasStopped = false;
+            noteOff.dest = event->dest;
+            noteOff.stopped = false;
             playingNotes.push_back(noteOff);
             
-            scheduledEvents[i]->isQueued = false;
+            scheduledEvents[i]->queued = false;
         }
     }
     
     // remove scheduled events in the past
     for (int i = 0; i < scheduledEvents.size(); i++) {
-        if (scheduledEvents[i]->isQueued == false) {
+        if (scheduledEvents[i]->queued == false) {
             scheduledEvents.erase(scheduledEvents.begin() + i);
         }
     }
@@ -226,12 +234,45 @@ void scheduleEventsForNextBeat(const double beatPosition) {
     double beat;
     modf(beatPosition, &beat);
     double quarter = int(floor(beatPosition * 4.0)) % 4;
-    if (quarter != previousQuarter) {
-        callback((int)beat + 1,
-                 (int)quarter,
+    if (quarter != prevQuarter) {
+        
+        int nextBeat = quarter + 1 >= 4 ? beat + 1 : beat;
+        int nextQuarter = (((int)quarter + 1) % 4);
+        
+        callback(nextBeat,
+                 nextQuarter,
                  callbackRefCon);
-        previousQuarter = quarter;
+        prevQuarter = quarter;
     }
+}
+
+void clearBuffers(MIDIPacket *midi) {
+    
+    // clear note buffers
+    if (scheduledEvents.size() > 0)
+        scheduledEvents.clear();
+    
+    if (playingNotes.size() > 0) {
+        // stop playing notes immediately
+        for(int i = 0; i < playingNotes.size(); i++) {
+            
+            PlayingNote note = playingNotes[i];
+            int size = midi[note.dest].length;
+            midi[note.dest].data[size] = NOTE_OFF + note.channel;
+            midi[note.dest].data[size + 1] = note.pitch;
+            midi[note.dest].data[size + 2] = 0;
+            midi[note.dest].length = size + 3;
+        }
+        playingNotes.clear();
+    }
+}
+
+void resetSequencer(const double beatPosition) {
+    
+    prevQuarter = -1;
+    previousSubtick = -1;
+    scheduleEventsForNextBeat(0);
+//        // stop MIDI clock
 }
 
 void renderTimeline(const AUEventSampleTime now,
@@ -239,7 +280,7 @@ void renderTimeline(const AUEventSampleTime now,
                     const UInt32 frameCount,
                     const double tempo,
                     const double beatPosition,
-                    MIDIPacket *midiData) {
+                    MIDIPacket *midi) {
     
     // get MIDI events from FIFO buffer and put in scheduledEvents
     getMidiEventsFromFIFOBuffer();
@@ -253,8 +294,10 @@ void renderTimeline(const AUEventSampleTime now,
          outputTimestamp += samplesPerSubtick(sampleRate, tempo)) {
         
         // wrap beat around if subtick count in current render cycle overflows beat boundaries
-        uint8_t beat = floor(beatPosition) + 1;
-        if ((subtickAtBufferBegin + subtickOffset) >= PPQ)
+        int beat = floor(beatPosition);
+        if (beatPosition < 0) {
+            beat = -1;
+        } else if ((subtickAtBufferBegin + subtickOffset) >= PPQ)
             beat += 1;
         
         uint8_t subtick = (subtickAtBufferBegin + subtickOffset) % PPQ;
@@ -279,13 +322,13 @@ void renderTimeline(const AUEventSampleTime now,
         
         previousSubtick = subtick;
         
-        fireEvents(midiData,
+        fireEvents(midi,
                    beat,
                    subtick);
         
         // timestamp MIDI packets
         for (int i = 0; i < 8; i++) {
-            midiData[i].timeStamp = outputTimestamp;
+            midi[i].timeStamp = outputTimestamp;
         }
         
         subtickOffset++;
