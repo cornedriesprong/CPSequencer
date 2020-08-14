@@ -7,33 +7,24 @@
 //
 
 #include "CPSequencer.h"
-#include "vector"
-#include "TPCircularBuffer.h"
-#include <os/lock.h>
 
-typedef struct PlayingNote {
-    int pitch;
-    int beat;
-    int subtick;
-    int channel;
-    int dest;
-    bool stopped;
-} PlayingNote;
+CPSequencer::CPSequencer(callback_t __nullable cb, void * __nullable refCon) {
+    
+    callback = cb;
+    callbackRefCon = refCon;
+    scheduledEvents.reserve(NOTE_CAPACITY);
+    playingNotes.reserve(NOTE_CAPACITY);
+    TPCircularBufferInit(&fifoBuffer, BUFFER_LENGTH);
+}
 
-TPCircularBuffer fifoBuffer;
-static struct os_unfair_lock_s lock;
-
-// nb: these are owned by the audio thread
-static int previousSubtick = -1;
-static int prevQuarter = -1;
-static callback_t callback;
-static void *callbackRefCon;
-static std::vector<MIDIEvent*> scheduledEvents;
-static std::vector<PlayingNote> playingNotes;
-static bool sendMIDIClockStart = true;
-
-// shared variable, only access via trylock
-static bool MIDIClockOn = true;
+//void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon) {
+//
+//    callback = cb;
+//    callbackRefCon = refCon;
+//    scheduledEvents.reserve(NOTE_CAPACITY);
+//    playingNotes.reserve(NOTE_CAPACITY);
+//    TPCircularBufferInit(&fifoBuffer, BUFFER_LENGTH);
+//}
 
 MIDIEvent event(int beat, int subtick) {
     
@@ -51,20 +42,11 @@ MIDIEvent event(int beat, int subtick) {
     return event;
 }
 
-void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon) {
-    
-    callback = cb;
-    callbackRefCon = refCon;
-    scheduledEvents.reserve(NOTE_CAPACITY);
-    playingNotes.reserve(NOTE_CAPACITY);
-    TPCircularBufferInit(&fifoBuffer, BUFFER_LENGTH);
-}
-
-void setMIDIClockOn(bool isOn) {
+void CPSequencer::setMIDIClockOn(bool isOn) {
     MIDIClockOn = isOn;
 }
 
-void addMidiEvent(MIDIEvent event) {
+void CPSequencer::addMidiEvent(MIDIEvent event) {
     
     uint32_t availableBytes = 0;
     MIDIEvent *head = (MIDIEvent *)TPCircularBufferHead(&fifoBuffer, &availableBytes);
@@ -72,7 +54,7 @@ void addMidiEvent(MIDIEvent event) {
     TPCircularBufferProduceBytes(&fifoBuffer, head, sizeof(MIDIEvent));
 }
 
-void getMidiEventsFromFIFOBuffer() {
+void CPSequencer::getMidiEventsFromFIFOBuffer() {
     
     uint32_t bytes = -1;
     while (bytes != 0) {
@@ -84,9 +66,7 @@ void getMidiEventsFromFIFOBuffer() {
     }
 }
 
-void stopPlayingNotes(MIDIPacket *midi,
-                      const int beat,
-                      const uint8_t subtick) {
+void CPSequencer::stopPlayingNotes(MIDIPacket *midi, const int beat, const uint8_t subtick) {
     
     if (playingNotes.size() == 0)
         return;
@@ -123,7 +103,7 @@ void stopPlayingNotes(MIDIPacket *midi,
     }
 }
 
-void addPlayingNoteToMidiData(char status, PlayingNote *note, MIDIPacket *midi) {
+void CPSequencer::addPlayingNoteToMidiData(char status, PlayingNote *note, MIDIPacket *midi) {
     
     int size = midi[note->dest].length;
     midi[note->dest].data[size] = status + note->channel;
@@ -132,7 +112,7 @@ void addPlayingNoteToMidiData(char status, PlayingNote *note, MIDIPacket *midi) 
     midi[note->dest].length = size + 3;
 }
 
-void addEventToMidiData(char status, MIDIEvent *ev, MIDIPacket *midiData) {
+void CPSequencer::addEventToMidiData(char status, MIDIEvent *ev, MIDIPacket *midiData) {
     
     int size = midiData[ev->dest].length;
     midiData[ev->dest].data[size] = status + ev->channel;
@@ -141,8 +121,7 @@ void addEventToMidiData(char status, MIDIEvent *ev, MIDIPacket *midiData) {
     midiData[ev->dest].length = size + 3;
 }
 
-void scheduleMIDIClock(uint8_t subtick,
-                       MIDIPacket *midi) {
+void CPSequencer::scheduleMIDIClock(uint8_t subtick, MIDIPacket *midi) {
     
     if (subtick % (PPQ / 24) == 0) {
         if (sendMIDIClockStart) {
@@ -160,11 +139,11 @@ void scheduleMIDIClock(uint8_t subtick,
     }
 }
 
-void fireEvents(MIDIPacket *midiData,
+void CPSequencer::fireEvents(MIDIPacket *midi,
                 const int beat,
                 const uint8_t subtick) {
     
-    stopPlayingNotes(midiData,
+    stopPlayingNotes(midi,
                      beat,
                      subtick);
     
@@ -178,22 +157,22 @@ void fireEvents(MIDIPacket *midiData,
             scheduledEvents[i]->queued == true) {
             
             MIDIEvent *ev = scheduledEvents[i];
-            
-            // if there's a playing note with same pitch, stop it first
-            for (int j = 0; j < playingNotes.size(); j++) {
-                if (playingNotes[j].pitch == ev->data1 &&
-                    !playingNotes[j].stopped) {
-
-                    // if so, send note off
-                    PlayingNote note = playingNotes[j];
-                    note.stopped = true;
-                    addPlayingNoteToMidiData(NOTE_OFF, &note, midiData);
-                }
-            }
 
             switch (ev->status) {
                 case NOTE_ON: {
-                    addEventToMidiData(NOTE_ON, ev, midiData);
+                    // if there's a playing note with same pitch, stop it first
+                    for (int j = 0; j < playingNotes.size(); j++) {
+                        if (playingNotes[j].pitch == ev->data1 &&
+                            !playingNotes[j].stopped) {
+                            
+                            // if so, send note off
+                            PlayingNote *note = &playingNotes[j];
+                            note->stopped = true;
+                            addPlayingNoteToMidiData(NOTE_OFF, note, midi);
+                        }
+                    }
+                    
+                    addEventToMidiData(NOTE_ON, ev, midi);
                     
                     // schedule note off
                     PlayingNote noteOff;
@@ -213,11 +192,11 @@ void fireEvents(MIDIPacket *midiData,
                     playingNotes.push_back(noteOff);
                 }
                 case CC: {
-                    addEventToMidiData(CC, ev, midiData);
+                    addEventToMidiData(CC, ev, midi);
                     break;
                 }
                 case PITCH_BEND: {
-                    addEventToMidiData(PITCH_BEND, ev, midiData);
+                    addEventToMidiData(PITCH_BEND, ev, midi);
                     break;
                 }
             }
@@ -266,7 +245,7 @@ int64_t sampleTimeForNextSubtick(const double sampleRate,
     return nextBeatSampleTime - (subticksLeftInBeat * samplesPerSubtick(sampleRate, tempo));
 }
 
-void scheduleEventsForNextBeat(const double beatPosition) {
+void CPSequencer::scheduleEventsForNextBeat(const double beatPosition) {
     
     double beat;
     modf(beatPosition, &beat);
@@ -283,7 +262,10 @@ void scheduleEventsForNextBeat(const double beatPosition) {
     }
 }
 
-void clearBuffers(MIDIPacket *midi) {
+void CPSequencer::clearBuffers(MIDIPacket *midi) {
+    
+    // clear fifo buffer
+    TPCircularBufferClear(&fifoBuffer);
     
     // clear note buffers
     if (scheduledEvents.size() > 0)
@@ -292,13 +274,8 @@ void clearBuffers(MIDIPacket *midi) {
     if (playingNotes.size() > 0) {
         // stop playing notes immediately
         for(int i = 0; i < playingNotes.size(); i++) {
-            
             PlayingNote note = playingNotes[i];
-            int size = midi[note.dest].length;
-            midi[note.dest].data[size] = NOTE_OFF + note.channel;
-            midi[note.dest].data[size + 1] = note.pitch;
-            midi[note.dest].data[size + 2] = 0;
-            midi[note.dest].length = size + 3;
+            addPlayingNoteToMidiData(NOTE_OFF, &note, midi);
         }
         playingNotes.clear();
     }
@@ -314,19 +291,19 @@ void clearBuffers(MIDIPacket *midi) {
     }
 }
 
-void stopSequencer(const double beatPosition) {
+void CPSequencer::stopSequencer(const double beatPosition) {
     
     prevQuarter = -1;
     previousSubtick = -1;
     scheduleEventsForNextBeat(0);
 }
 
-void renderTimeline(const AUEventSampleTime now,
-                    const double sampleRate,
-                    const UInt32 frameCount,
-                    const double tempo,
-                    const double beatPosition,
-                    MIDIPacket *midi) {
+void CPSequencer::renderTimeline(const AUEventSampleTime now,
+                                 const double sampleRate,
+                                 const UInt32 frameCount,
+                                 const double tempo,
+                                 const double beatPosition,
+                                 MIDIPacket *midi) {
     
     // get MIDI events from FIFO buffer and put in scheduledEvents
     getMidiEventsFromFIFOBuffer();
