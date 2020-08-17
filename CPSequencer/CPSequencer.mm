@@ -190,6 +190,8 @@ void CPSequencer::fireEvents(MIDIPacket *midi,
                     noteOff.dest    = ev->dest;
                     noteOff.stopped = false;
                     playingNotes.push_back(noteOff);
+                    
+                    break;
                 }
                 case CC: {
                     addEventToMidiData(CC, ev, midi);
