@@ -140,8 +140,8 @@ void CPSequencer::scheduleMIDIClock(uint8_t subtick, MIDIPacket *midi) {
 }
 
 void CPSequencer::fireEvents(MIDIPacket *midi,
-                const int beat,
-                const uint8_t subtick) {
+                             const int beat,
+                             const uint8_t subtick) {
     
     stopPlayingNotes(midi,
                      beat,
@@ -281,17 +281,17 @@ void CPSequencer::clearBuffers(MIDIPacket *midi) {
     }
     
     // stop MIDI clock
-    if (os_unfair_lock_trylock(&lock)) {
-        if (MIDIClockOn)
-            for (int i = 0; i < 8; i++) {
-                midi[i].data[0] = MIDI_CLOCK_STOP;
-                midi[i].length++;
-            }
-        os_unfair_lock_unlock(&lock);
+    if (MIDIClockOn) {
+        for (int i = 0; i < 8; i++) {
+            midi[i].data[0] = MIDI_CLOCK_STOP;
+            midi[i].length++;
+        }
     }
+    
+    sendMIDIClockStart = true;
 }
 
-void CPSequencer::stopSequencer(const double beatPosition) {
+void CPSequencer::stopSequencer() {
     
     prevQuarter = -1;
     previousSubtick = -1;
@@ -345,11 +345,8 @@ void CPSequencer::renderTimeline(const AUEventSampleTime now,
         
         previousSubtick = subtick;
         
-        if (os_unfair_lock_trylock(&lock)) {
-            if (MIDIClockOn)
-                scheduleMIDIClock(subtick, midi);
-            os_unfair_lock_unlock(&lock);
-        }
+        if (MIDIClockOn)
+            scheduleMIDIClock(subtick, midi);
         
         fireEvents(midi,
                    beat,

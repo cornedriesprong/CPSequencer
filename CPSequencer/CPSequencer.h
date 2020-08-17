@@ -79,7 +79,7 @@ public:
 //    void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon);
     void addMidiEvent(MIDIEvent event);
     void clearBuffers(MIDIPacket * _Nonnull midiData);
-    void stopSequencer(const double beatPosition);
+    void stopSequencer();
     void setMIDIClockOn(bool isOn);
     
     void renderTimeline(const AUEventSampleTime now,
