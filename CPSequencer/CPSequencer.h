@@ -76,7 +76,6 @@ private:
     
 public:
     CPSequencer(callback_t __nullable cb, void * __nullable refCon);
-//    void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon);
     void addMidiEvent(MIDIEvent event);
     void clearBuffers(MIDIPacket * _Nonnull midiData);
     void stopSequencer();

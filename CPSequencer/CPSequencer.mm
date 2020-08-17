@@ -17,15 +17,6 @@ CPSequencer::CPSequencer(callback_t __nullable cb, void * __nullable refCon) {
     TPCircularBufferInit(&fifoBuffer, BUFFER_LENGTH);
 }
 
-//void CPSequencerInit(callback_t __nullable cb, void * __nullable refCon) {
-//
-//    callback = cb;
-//    callbackRefCon = refCon;
-//    scheduledEvents.reserve(NOTE_CAPACITY);
-//    playingNotes.reserve(NOTE_CAPACITY);
-//    TPCircularBufferInit(&fifoBuffer, BUFFER_LENGTH);
-//}
-
 MIDIEvent event(int beat, int subtick) {
     
     MIDIEvent event = {0};
@@ -272,12 +263,12 @@ void CPSequencer::clearBuffers(MIDIPacket *midi) {
     // clear note buffers
     if (scheduledEvents.size() > 0)
         scheduledEvents.clear();
-    
+   
     if (playingNotes.size() > 0) {
         // stop playing notes immediately
         for(int i = 0; i < playingNotes.size(); i++) {
-            PlayingNote note = playingNotes[i];
-            addPlayingNoteToMidiData(NOTE_OFF, &note, midi);
+            PlayingNote *note = &playingNotes[i];
+            addPlayingNoteToMidiData(NOTE_OFF, note, midi);
         }
         playingNotes.clear();
     }
