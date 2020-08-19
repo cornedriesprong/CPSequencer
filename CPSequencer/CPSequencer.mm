@@ -266,7 +266,7 @@ void CPSequencer::clearBuffers(MIDIPacket *midi) {
    
     if (playingNotes.size() > 0) {
         // stop playing notes immediately
-        for(int i = 0; i < playingNotes.size(); i++) {
+        for (int i = 0; i < playingNotes.size(); i++) {
             PlayingNote *note = &playingNotes[i];
             addPlayingNoteToMidiData(NOTE_OFF, note, midi);
         }
