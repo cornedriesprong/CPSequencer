@@ -17,22 +17,6 @@ CPSequencer::CPSequencer(callback_t __nullable cb, void * __nullable refCon) {
     TPCircularBufferInit(&fifoBuffer, BUFFER_LENGTH);
 }
 
-MIDIEvent event(int beat, int subtick) {
-    
-    MIDIEvent event = {0};
-    event.beat = beat;
-    event.subtick = subtick;
-    event.status = NOTE_ON;
-    event.data1 = 64;
-    event.data2 = 100;
-    event.duration = 24;
-    event.channel = 0;
-    event.dest = 0;
-    event.queued = true;
-    
-    return event;
-}
-
 void CPSequencer::setMIDIClockOn(bool isOn) {
     MIDIClockOn = isOn;
 }
