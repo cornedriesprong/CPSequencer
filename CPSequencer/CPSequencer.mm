@@ -272,7 +272,6 @@ void CPSequencer::stopSequencer() {
     
     prevQuarter = -1;
     previousSubtick = -1;
-    scheduleEventsForNextBeat(0);
 }
 
 void CPSequencer::renderTimeline(const AUEventSampleTime now,
