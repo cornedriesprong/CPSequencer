@@ -64,7 +64,7 @@ private:
     bool sendMIDIClockStart = true;
     
     // shared variable, only access via trylock
-    bool MIDIClockOn = true;
+    bool MIDIClockOn = false;
     
     void getMidiEventsFromFIFOBuffer();
     void stopPlayingNotes(MIDIPacket * _Nonnull midi, const int beat, const uint8_t subtick);
