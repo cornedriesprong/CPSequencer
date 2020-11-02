@@ -8,8 +8,8 @@
 
 #include <AudioToolbox/AudioToolbox.h>
 #include <os/lock.h>
-#include "TPCircularBuffer.h"
-#include "vector"
+#include <CPSequencer/TPCircularBuffer.h>
+#include <vector>
 
 #define NOTE_ON             0x90
 #define NOTE_OFF            0x80
@@ -55,8 +55,9 @@ private:
     struct os_unfair_lock_s lock;
     
     // nb: these are owned by the audio thread
-    int previousSubtick = -1;
+//    int previousSubtick = -1;
     int prevQuarter = -1;
+    int64_t previousTimestamp = 0;
     callback_t callback;
     void *callbackRefCon;
     std::vector<MIDIEvent*> scheduledEvents;
@@ -72,7 +73,7 @@ private:
     void addEventToMidiData(char status, MIDIEvent * _Nonnull ev, MIDIPacket * _Nonnull midiData);
     void scheduleMIDIClock(uint8_t subtick, MIDIPacket * _Nonnull midi);
     void fireEvents(MIDIPacket * _Nonnull midi, const int beat, const uint8_t subtick);
-    void scheduleEventsForNextBeat(const double beatPosition);
+    void scheduleEventsForNextSegment(const double beatPosition);
     
 public:
     CPSequencer(callback_t __nullable cb, void * __nullable refCon);
@@ -86,6 +87,6 @@ public:
                         const UInt32 frameCount,
                         const double tempo,
                         const double currentBeatPosition,
-                        MIDIPacket * _Nonnull midiData);
+                        MIDIPacket midiData[]);
 };
 

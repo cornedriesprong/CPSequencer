@@ -43,6 +43,7 @@ void CPSequencer::getMidiEventsFromFIFOBuffer() {
 
 void CPSequencer::stopPlayingNotes(MIDIPacket *midi, const int beat, const uint8_t subtick) {
     
+    
     if (playingNotes.size() == 0)
         return;
     
@@ -222,7 +223,7 @@ int64_t sampleTimeForNextSubtick(const double sampleRate,
     return nextBeatSampleTime - (subticksLeftInBeat * samplesPerSubtick(sampleRate, tempo));
 }
 
-void CPSequencer::scheduleEventsForNextBeat(const double beatPosition) {
+void CPSequencer::scheduleEventsForNextSegment(const double beatPosition) {
     
     double beat;
     modf(beatPosition, &beat);
@@ -269,17 +270,17 @@ void CPSequencer::clearBuffers(MIDIPacket *midi) {
 }
 
 void CPSequencer::stopSequencer() {
-    
     prevQuarter = -1;
-    previousSubtick = -1;
 }
+
+int64_t prevTimeStamp = 0;
 
 void CPSequencer::renderTimeline(const AUEventSampleTime now,
                                  const double sampleRate,
                                  const UInt32 frameCount,
                                  const double tempo,
                                  const double beatPosition,
-                                 MIDIPacket *midi) {
+                                 MIDIPacket midi[]) {
     
     // get MIDI events from FIFO buffer and put in scheduledEvents
     getMidiEventsFromFIFOBuffer();
@@ -289,7 +290,7 @@ void CPSequencer::renderTimeline(const AUEventSampleTime now,
     // nb: it seems we need to increase the buffer's window size a little
     // bit to account for timing jitter. 128 seems to be a good value.
     for (int64_t outputTimestamp = sampleTimeForNextSubtick(sampleRate, tempo, now, beatPosition);
-         outputTimestamp <= (now + frameCount + 128);
+         outputTimestamp <= (now + frameCount);
          outputTimestamp += samplesPerSubtick(sampleRate, tempo)) {
         
         // wrap beat around if subtick count in current render cycle overflows beat boundaries
@@ -301,40 +302,18 @@ void CPSequencer::renderTimeline(const AUEventSampleTime now,
         
         uint8_t subtick = (subtickAtBufferBegin + subtickOffset) % PPQ;
         
-        if (previousSubtick == subtick) {
-            // we've already scheduled events for this subtick, continue
-            subtickOffset++;
-            continue;
-        }
-        
-//        if ((subtick - previousSubtick) != 1 && (previousSubtick - subtick) != PPQ - 1) {
-//            if (subtick - previousSubtick == 0) {
-//                printf("double subtick at   %d:%d\n", beat, subtick);
-//            } else {
-//                int missedSubtickCount = (subtick - previousSubtick) - 1;
-//                printf("missed %d subticks at %d:%d\n", missedSubtickCount, beat, previousSubtick);
-//            }
-//            printf("output timestamp    %lld\n", outputTimestamp);
-//            printf("buffer end          %lld\n", now + frameCount);
-//            printf("-------------------------\n");
-//        }
-        
-        previousSubtick = subtick;
-        
         if (MIDIClockOn)
             scheduleMIDIClock(subtick, midi);
         
-        fireEvents(midi,
+        fireEvents(&midi[subtickOffset],
                    beat,
                    subtick);
         
-        // timestamp MIDI packets
-        for (int i = 0; i < 8; i++) {
-            midi[i].timeStamp = outputTimestamp;
-        }
+        midi[subtickOffset].timeStamp = outputTimestamp;
+        prevTimeStamp = outputTimestamp;
         
         subtickOffset++;
     }
     
-    scheduleEventsForNextBeat(beatPosition);
+    scheduleEventsForNextSegment(beatPosition);
 }
