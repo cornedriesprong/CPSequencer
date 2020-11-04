@@ -290,7 +290,7 @@ void CPSequencer::renderTimeline(const AUEventSampleTime now,
     // nb: it seems we need to increase the buffer's window size a little
     // bit to account for timing jitter. 128 seems to be a good value.
     for (int64_t outputTimestamp = sampleTimeForNextSubtick(sampleRate, tempo, now, beatPosition);
-         outputTimestamp <= (now + frameCount);
+         outputTimestamp <= (now + (frameCount + 128));
          outputTimestamp += samplesPerSubtick(sampleRate, tempo)) {
         
         // wrap beat around if subtick count in current render cycle overflows beat boundaries
