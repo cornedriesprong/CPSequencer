@@ -23,6 +23,7 @@
 #define PPQ                 96
 #define NOTE_CAPACITY       256
 #define BUFFER_LENGTH       16384
+#define MIDI_PACKET_SIZE    4
 
 typedef struct MIDIEvent {
     int beat;
@@ -55,7 +56,7 @@ private:
     struct os_unfair_lock_s lock;
     
     // nb: these are owned by the audio thread
-//    int previousSubtick = -1;
+    int previousSubtick = -1;
     int prevQuarter = -1;
     int64_t previousTimestamp = 0;
     callback_t callback;
@@ -78,7 +79,7 @@ private:
 public:
     CPSequencer(callback_t __nullable cb, void * __nullable refCon);
     void addMidiEvent(MIDIEvent event);
-    void clearBuffers(MIDIPacket * _Nonnull midiData);
+    void clearBuffers(MIDIPacket midiData[MIDI_PACKET_SIZE][8]);
     void stopSequencer();
     void setMIDIClockOn(bool isOn);
     
@@ -87,6 +88,6 @@ public:
                         const UInt32 frameCount,
                         const double tempo,
                         const double currentBeatPosition,
-                        MIDIPacket midiData[]);
+                        MIDIPacket midiData[MIDI_PACKET_SIZE][8]);
 };
 
