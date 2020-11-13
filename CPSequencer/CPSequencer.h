@@ -23,7 +23,7 @@
 #define PPQ                 96
 #define NOTE_CAPACITY       256
 #define BUFFER_LENGTH       16384
-#define MIDI_PACKET_SIZE    4
+#define MIDI_PACKET_SIZE    16
 
 typedef struct MIDIEvent {
     int beat;
