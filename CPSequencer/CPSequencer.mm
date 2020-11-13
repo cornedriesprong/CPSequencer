@@ -133,7 +133,7 @@ void CPSequencer::fireEvents(MIDIPacket *midi,
             scheduledEvents[i]->queued == true) {
             
             MIDIEvent *ev = scheduledEvents[i];
-
+            
             switch (ev->status) {
                 case NOTE_ON: {
                     // if there's a playing note with same pitch, stop it first
@@ -248,7 +248,7 @@ void CPSequencer::clearBuffers(MIDIPacket midiData[MIDI_PACKET_SIZE][8]) {
     // clear note buffers
     if (scheduledEvents.size() > 0)
         scheduledEvents.clear();
-   
+    
     if (playingNotes.size() > 0) {
         // stop playing notes immediately
         for (int i = 0; i < playingNotes.size(); i++) {
@@ -285,35 +285,25 @@ void CPSequencer::renderTimeline(const AUEventSampleTime now,
     // get MIDI events from FIFO buffer and put in scheduledEvents
     getMidiEventsFromFIFOBuffer();
     
-//    printf("%lu\n", scheduledEvents.size());
-    
     uint8_t subtickAtBufferBegin = subtickPosition(beatPosition);
     uint8_t subtickOffset = 0;
     // nb: it seems we need to increase the buffer's window size a little
     // bit to account for timing jitter. 128 seems to be a good value.
-    int64_t x = sampleTimeForNextSubtick(sampleRate, tempo, now, beatPosition);
-    int64_t offset = x - now;
-    
-    for (int64_t outputTimestamp = x;
-         outputTimestamp <= (now + (frameCount + offset));
+
+    for (int64_t outputTimestamp = sampleTimeForNextSubtick(sampleRate, tempo, now, beatPosition);
+         outputTimestamp <= (now + (frameCount));
          outputTimestamp += samplesPerSubtick(sampleRate, tempo)) {
         
         // wrap beat around if subtick count in current render cycle overflows beat boundaries
         int beat = floor(beatPosition);
         if (beatPosition < 0) {
             beat = -1;
-        } else if ((subtickAtBufferBegin + subtickOffset) >= PPQ)
+        } else if ((subtickAtBufferBegin + subtickOffset) >= PPQ) {
             beat += 1;
+        }
         
         uint8_t subtick = (subtickAtBufferBegin + subtickOffset) % PPQ;
         
-        if (previousSubtick == subtick) {
-            subtickOffset++;
-            continue;
-        }
-        
-        printf("subtick:    %hhu\n", subtick);
-            
         previousSubtick = subtick;
         
         if (MIDIClockOn) {
