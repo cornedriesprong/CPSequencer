@@ -43,7 +43,6 @@ void CPSequencer::getMidiEventsFromFIFOBuffer() {
 
 void CPSequencer::stopPlayingNotes(MIDIPacket *midi, const int beat, const uint8_t subtick) {
     
-    
     if (playingNotes.size() == 0)
         return;
     
@@ -203,7 +202,7 @@ int subtickPosition(const double beatPosition) {
     
     double integral;
     double fractional = modf(beatPosition, &integral);
-    return ceil(PPQ * fractional);
+    return floor(PPQ * fractional);
 }
 
 int64_t sampleTimeForNextSubtick(const double sampleRate,
@@ -301,6 +300,12 @@ void CPSequencer::renderTimeline(const AUEventSampleTime now,
         }
         
         uint8_t subtick = (subtickAtBufferBegin + subtickOffset) % PPQ;
+        
+        // handle double subticks in case of timing jitter
+        if (subtick == previousSubtick) {
+            subtickOffset++;
+            continue;
+        }
         
         previousSubtick = subtick;
         
