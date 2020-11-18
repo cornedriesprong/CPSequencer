@@ -287,11 +287,9 @@ void CPSequencer::renderTimeline(const AUEventSampleTime now,
     
     uint8_t subtickAtBufferBegin = subtickPosition(beatPosition);
     uint8_t subtickOffset = 0;
-    // nb: it seems we need to increase the buffer's window size a little
-    // bit to account for timing jitter. 128 seems to be a good value.
 
     for (int64_t outputTimestamp = sampleTimeForNextSubtick(sampleRate, tempo, now, beatPosition);
-         outputTimestamp <= (now + (frameCount));
+         outputTimestamp <= (now + frameCount);
          outputTimestamp += samplesPerSubtick(sampleRate, tempo)) {
         
         // wrap beat around if subtick count in current render cycle overflows beat boundaries
@@ -315,6 +313,7 @@ void CPSequencer::renderTimeline(const AUEventSampleTime now,
                    subtick);
         
         for (int i = 0; i < 8; i++) {
+            if (subtickOffset >= MIDI_PACKET_SIZE) { break; }
             midiData[subtickOffset][i].timeStamp = outputTimestamp;
         }
         
